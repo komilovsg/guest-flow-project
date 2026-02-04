@@ -99,15 +99,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         if (cancelled) return;
-        refreshAccess().then((newToken) => {
-          if (cancelled) return;
-          if (newToken) fetchMe(newToken).catch(() => setUser(null));
-          else {
-            clearStoredTokens();
-            setAccessToken(null);
-            setUser(null);
-          }
-        });
+        refreshAccess()
+          .then((newToken) => {
+            if (cancelled) return;
+            if (newToken) fetchMe(newToken).catch(() => setUser(null));
+            else {
+              clearStoredTokens();
+              setAccessToken(null);
+              setUser(null);
+            }
+          })
+          .catch(() => {
+            if (!cancelled) {
+              clearStoredTokens();
+              setAccessToken(null);
+              setUser(null);
+            }
+          })
+          .finally(() => {
+            if (!cancelled) setIsInitialized(true);
+          });
       })
       .finally(() => {
         if (!cancelled) setIsInitialized(true);

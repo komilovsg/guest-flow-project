@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { RootErrorBoundary } from "@/components/root-error-boundary";
 import { AuthProvider } from "@/contexts/auth-context";
 import "./globals.css";
 
@@ -29,13 +30,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-          toastOptions={{ duration: 4000 }}
-        />
+        <RootErrorBoundary>
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            toastOptions={{ duration: 4000 }}
+          />
+        </RootErrorBoundary>
       </body>
     </html>
   );
